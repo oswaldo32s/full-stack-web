@@ -1,87 +1,22 @@
 import express, { json } from 'express'
-import { randomUUID } from 'node:crypto'
 import cors from 'cors'
-import { validateMovie, validatePartialMovie } from './schemas/movies.js'
-import movies from './movies.json' with {type: 'json'}
+import { moviesRouter } from './routes/movies.js'
 
 const PORT = process.env.PORT ?? 3200
 
 const app = express()
 
-app.disable('x-powered-by')
+// Middleware
 
 app.use(json())
 app.use(cors())
 
-app.get('/', (req, res) => {
-  res.send('<h1> Hola Amigos </h1>')
-})
+app.disable('x-powered-by')
 
-app.get('/movies', (req, res) => {
-  const { genre } = req.query
-  if (genre) {
-    const filteredMovies = movies.filter(
-      movie => movie.genre.some(g => g.toLocaleLowerCase() === genre.toLocaleLowerCase())
-    )
+// Movies
+app.use('/movies', moviesRouter)
 
-    return res.json(filteredMovies)
-  }
-  res.json(movies)
-})
-
-app.post('/movies', (req, res) => {
-  const result = validateMovie(req.body)
-
-  if (result.error) {
-    return res.status(400).json({ error: JSON.parse(result.error.message) })
-  }
-
-  const newMovie = {
-    id: randomUUID(),
-    ...result
-  }
-
-  movies.push(newMovie)
-
-  res.status(201).json(newMovie)
-})
-
-app.get('/movies/:id', (req, res) => {
-  const { id } = req.params
-  const movie = movies.find(movie => movie.id === id)
-  if (movie) return res.json(movie)
-
-  res.status(404).json({ message: 'Movie not found' })
-})
-
-app.patch('/movies/:id', (req, res) => {
-  // get the body
-  const result = validatePartialMovie(req.body)
-
-  // if the body does not pass the validation do the following
-  if (result.error) {
-    return res.status(400).json({ error: JSON.parse(result.error.message) })
-  }
-
-  // get the id param and the movie index
-  const { id } = req.params
-  const movieIndex = movies.findIndex(movie => movie.id === id)
-
-  // if the movie does not exist show error
-  if (movieIndex === -1) {
-    return res.status(404).json({ message: 'Movie not found' })
-  }
-
-  // get a new movie object with updated fields
-  const updateMovie = {
-    ...movies[movieIndex],
-    ...result.data
-  }
-
-  movies[movieIndex] = updateMovie
-
-  res.json(updateMovie)
-})
+// NOT FOUND
 
 app.use((req, res) => {
   res.status(404).send('<h1>404</h1>')
