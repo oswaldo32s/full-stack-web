@@ -1,0 +1,26 @@
+{
+  "name": "full-stack-web",
+  "version": "1.0.0",
+  "description": "first full-stack web for practice with MiduDev course",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "dev": "node --watch app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oswaldo32s/full-stack-web.git"
+  },
+  "author": "oswaldo gonzalez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oswaldo32s/full-stack-web/issues"
+  },
+  "homepage": "https://github.com/oswaldo32s/full-stack-web#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "5.1.0",
+    "zod": "3.25.7"
+  }
+}
